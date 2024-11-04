@@ -33,14 +33,23 @@ jobs:
           name: war-file
           path: target/*.war
 
-      - name: Install GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          sudo apt update
-          sudo apt install gh
-
-      - name: Create Release and Upload Asset
-        run: |
-          gh release create ${{ env.RELEASE_VERSION }} ./target/*.war --notes "Release version ${{ env.RELEASE_VERSION }}"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.RELEASE_VERSION }}
+          release_name: Release-Test v${{ env.RELEASE_VERSION }}
+          draft: true
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/*.war
+          asset_name: Release-Test-v${{ env.RELEASE_VERSION }}.war
+          asset_content_type: application/java-archive
