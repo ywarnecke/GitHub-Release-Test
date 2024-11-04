@@ -8,7 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      ARTIFACT_NAME: "Release-Test"
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -32,9 +33,9 @@ jobs:
         run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
 
       - name: Upload WAR as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: war-file
+          name: ${{ env.ARTIFACT_NAME }}_${{ env.RELEASE_VERSION }}
           path: ${{ env.WAR_PATH }}
 
       - name: Create Release
@@ -45,6 +46,6 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "v${{ env.RELEASE_VERSION }}"
           draft: true
-          title: "Release-Test v${{ env.RELEASE_VERSION }}"
+          title: "${{ env.ARTIFACT_NAME }} v${{ env.RELEASE_VERSION }}"
           files: |
             ${{ env.WAR_PATH }}
