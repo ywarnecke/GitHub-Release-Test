@@ -32,13 +32,13 @@ jobs:
 
       - name: Identify WAR file
         id: find_war
-        run: echo "war_name=$(ls target/*.war)" >> $GITHUB_OUTPUT
+        run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
 
       - name: Upload WAR as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: war-file
-          path: target/${{ steps.find_war.outputs.war_name }}
+          path: ${{ steps.find_war.outputs.war_name }}
 
       - name: Create Release
         id: create_release
@@ -57,6 +57,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find_war.outputs.war_name }}
+          asset_path: ${{ env.WAR_PATH }}
           asset_name: Release-Test-v${{ env.RELEASE_VERSION }}.war
           asset_content_type: application/java-archive
