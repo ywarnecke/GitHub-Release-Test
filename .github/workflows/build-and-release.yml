@@ -32,7 +32,7 @@ jobs:
 
       - name: Identify WAR file
         id: find_war
-        run: echo "::set-output name=war_name::$(ls target/*.war)"
+        run: echo "war_name=$(ls target/*.war)" >> $GITHUB_OUTPUT
 
       - name: Upload WAR as Artifact
         uses: actions/upload-artifact@v3
