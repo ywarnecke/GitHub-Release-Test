@@ -27,9 +27,6 @@ jobs:
         id: get_version
         run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: List output files
-        run: ls -l target/
-
       - name: Identify WAR file
         id: find_war
         run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
@@ -41,22 +38,13 @@ jobs:
           path: ${{ env.WAR_PATH }}
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+        uses: "marvinpinto/action-automatic-releases@latest"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.RELEASE_VERSION }}
-          release_name: Release-Test v${{ env.RELEASE_VERSION }}
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "v${{ env.RELEASE_VERSION }}"
           draft: true
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.WAR_PATH }}
-          asset_name: Release-Test-v${{ env.RELEASE_VERSION }}.war
-          asset_content_type: application/java-archive
+          title: "Release-Test v${{ env.RELEASE_VERSION }}"
+          files: |
+            ${{ env.WAR_PATH }}
