@@ -28,14 +28,17 @@ jobs:
         id: get_version
         run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
-      - name: Rename War file
-        id: rename_war
-        run: mv target/*.war target/${{ env.ARTIFACT_NAME }}-${{ env.RELEASE_VERSION }}
-
       - name: Identify WAR file
         id: find_war
         run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
 
+      - name: Rename War file
+        id: rename_war
+        run: mv ${{ env.WAR_PATH }} target/${{ env.ARTIFACT_NAME }}-${{ env.RELEASE_VERSION }}
+
+      - name: Identify WAR file
+        id: find_war
+        run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
