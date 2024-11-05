@@ -28,15 +28,14 @@ jobs:
         id: get_version
         run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
+      - name: Rename War file
+        id: rename_war
+        run: mv target/*.war target/${{ env.ARTIFACT_NAME }}-${{ env.RELEASE_VERSION }}
+
       - name: Identify WAR file
         id: find_war
         run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
 
-      #- name: Upload WAR as Artifact
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: ${{ env.ARTIFACT_NAME }}_${{ env.RELEASE_VERSION }}
-      #    path: ${{ env.WAR_PATH }}
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@latest"
