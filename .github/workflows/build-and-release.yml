@@ -37,7 +37,7 @@ jobs:
         run: mv ${{ env.WAR_PATH }} target/${{ env.ARTIFACT_NAME }}-${{ env.RELEASE_VERSION }}
 
       - name: Identify WAR file
-        id: find_war
+        id: find_war2
         run: echo "WAR_PATH=$(ls target/*.war)" >> $GITHUB_ENV
 
       - name: Create Release
